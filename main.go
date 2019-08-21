@@ -49,6 +49,17 @@ func NewBlockChain() *BlockChain{
 func GenesisBlock()*Block{
 	return NewBlock("我是GOBTC的第一个区块!",[]byte{})
 }
+// 7.区块链中创建区块
+func (blockChain *BlockChain)AddBlock(data string){
+	// 1.获取区块链中最后一个区块
+	lastBlcok:=blockChain.blocks[len(blockChain.blocks)-1]
+	// 2.取它的HASH作为最新区块的前区块HASH
+	preBlockhash:=lastBlcok.CurBlockHash
+	// 3.创建新的区块
+	block:=NewBlock(data,preBlockhash)
+	// 4.将创建的最新区块追加进区块链中
+	blockChain.blocks=append(blockChain.blocks,block)
+}
 func main(){
 	//block:=NewBlock("我在博学谷挖到一个BTC",[]byte{})
 	//fmt.Printf("前一个区块的数据: %x\n",block.PreBlockHash)
@@ -57,11 +68,14 @@ func main(){
 	//fmt.Println("区块交易的数据:",string(block.Data))
 	//fmt.Println("hello BTC")
 	blockChain:=NewBlockChain()
+	blockChain.AddBlock("老王转了50BTC给小红")
+	blockChain.AddBlock("小黑挖到一个新的区块L:wq")
 	for i,block:=range blockChain.blocks{
 		fmt.Printf("当前区块的高度:%d======\n",i)
 		fmt.Printf("前一个区块的数据: %x\n",block.PreBlockHash)
 		fmt.Printf("当前区块的数据: %x\n",block.CurBlockHash)
-		fmt.Printf("区块交易的数据:%s\n",block.Data)
+		//fmt.Printf("区块交易的数据:%s\n",block.Data)
 		fmt.Println("区块交易的数据:",string(block.Data))
 	}
+
 }
