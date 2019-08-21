@@ -1,20 +1,38 @@
 package main
 
-import "crypto/sha256"
+import (
+	"crypto/sha256"
+	"time"
+)
 
 // 0 定义区块结构体
 type Block struct {
-	// 前一区块哈希
+	// 1.版本号
+	Version uint64
+    // 2.梅克尔根
+    MerkelRoot []byte
+	// 3.当前时间戳
+	TimeStamp uint64
+	// 4.难度值
+	Difficulty uint64
+	// 5.随机数
+	Nonce uint64
+	// 6.前一区块哈希
 	PreBlockHash []byte
-	// 当前区块哈希
+	// a 当前区块哈希 ，正常区块中没有当前区块的哈希，这里为了后面验证方便做了简化
 	CurBlockHash []byte
-	// 交易数据
+	// b 交易数据
 	Data []byte
 }
 // 1 创建区块
 func NewBlock(data string,preBlockHash []byte) *Block{
 	block:=Block{
+		Version:00,
 		PreBlockHash:preBlockHash,
+		MerkelRoot:[]byte{},
+		TimeStamp:uint64(time.Now().Unix()),
+		Difficulty:0,
+		Nonce: 0,
 		CurBlockHash:[]byte{},
 		Data:[]byte(data),
 	}
@@ -24,9 +42,20 @@ func NewBlock(data string,preBlockHash []byte) *Block{
 }
 // 3.设置当前区块HASH
 func (block *Block)SetCurHash(){
+	var blockInfo []byte
 	// 1.拼装数据
-	blockInfo:=append(block.PreBlockHash,block.Data...)
+	blockInfo=append(blockInfo,Uint64ToBytes(block.Version)...)
+	blockInfo=append(blockInfo,block.PreBlockHash...)
+	blockInfo=append(blockInfo, block.MerkelRoot...)
+	blockInfo=append(blockInfo, Uint64ToBytes(block.TimeStamp)...)
+	blockInfo=append(blockInfo,Uint64ToBytes(block.Difficulty)...)
+	blockInfo=append(blockInfo,Uint64ToBytes(block.Nonce)...)
+	blockInfo=append(blockInfo, block.Data...)
 	// 2.shua256
 	curBlockHash:= sha256.Sum256(blockInfo)
 	block.CurBlockHash=curBlockHash[:]
+}
+// uint64转byte数组
+func Uint64ToBytes(num uint64)[]byte{
+	return []byte{}
 }
