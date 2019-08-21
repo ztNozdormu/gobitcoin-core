@@ -45,15 +45,26 @@ func NewBlock(data string,preBlockHash []byte) *Block{
 }
 // 3.设置当前区块HASH
 func (block *Block)SetCurHash(){
-	var blockInfo []byte
+	//var blockInfo []byte
 	// 1.拼装数据
-	blockInfo=append(blockInfo,Uint64ToBytes(block.Version)...)
-	blockInfo=append(blockInfo,block.PreBlockHash...)
-	blockInfo=append(blockInfo, block.MerkelRoot...)
-	blockInfo=append(blockInfo, Uint64ToBytes(block.TimeStamp)...)
-	blockInfo=append(blockInfo,Uint64ToBytes(block.Difficulty)...)
-	blockInfo=append(blockInfo,Uint64ToBytes(block.Nonce)...)
-	blockInfo=append(blockInfo, block.Data...)
+	//blockInfo=append(blockInfo,Uint64ToBytes(block.Version)...)
+	//blockInfo=append(blockInfo,block.PreBlockHash...)
+	//blockInfo=append(blockInfo, block.MerkelRoot...)
+	//blockInfo=append(blockInfo, Uint64ToBytes(block.TimeStamp)...)
+	//blockInfo=append(blockInfo,Uint64ToBytes(block.Difficulty)...)
+	//blockInfo=append(blockInfo,Uint64ToBytes(block.Nonce)...)
+	//blockInfo=append(blockInfo, block.Data...)
+	// 代码优化
+	tmp:=[][]byte{
+		Uint64ToBytes(block.Version),
+		block.PreBlockHash,
+		block.MerkelRoot,
+		Uint64ToBytes(block.TimeStamp),
+		Uint64ToBytes(block.Difficulty),
+		Uint64ToBytes(block.Nonce),
+		block.Data,
+	}
+	blockInfo:=bytes.Join(tmp,[]byte{})
 	// 2.shua256
 	curBlockHash:= sha256.Sum256(blockInfo)
 	block.CurBlockHash=curBlockHash[:]
